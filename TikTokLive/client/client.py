@@ -119,7 +119,7 @@ class TikTokLiveClient(AsyncIOEventEmitter):
 
         """
 
-        if self._ws.connected:
+        if self._ws.in_connection_loop:
             raise AlreadyConnectedError("You can only make one connection per client!")
 
         # <Required> Fetch room ID
