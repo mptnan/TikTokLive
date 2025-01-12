@@ -47,6 +47,7 @@ class WebcastConnect(Connect):
         self.logger = self._logger = logger
         self._ws: Optional[WebSocketClientProtocol] = None
         self._initial_response: WebcastResponse = initial_webcast_response
+        self._in_connection_loop: bool = False
 
     @property
     def ws(self) -> Optional[WebSocketClientProtocol]:
@@ -66,6 +67,7 @@ class WebcastConnect(Connect):
         first_connect: bool = True
 
         while True:
+            self._in_connection_loop = True
             try:
 
                 # "async with" yields a WebsocketClientProtocol
@@ -95,6 +97,7 @@ class WebcastConnect(Connect):
                         yield webcast_push_frame, webcast_response
 
             except InvalidStatusCode as ex:
+                self._in_connection_loop = False
                 if ex.status_code == 200:
                     raise WebcastBlocked200Error("WebSocket rejected by TikTok with a 200 status code, implying detection.") from ex
                 raise
