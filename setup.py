@@ -47,6 +47,7 @@ if __name__ == '__main__':
             "mashumaro>=3.5",  # JSON Deserialization
             "protobuf3-to-dict>=0.1.5",
             "protobuf>=3.19.4",
+            "psutil",
 
         ],
         classifiers=[
