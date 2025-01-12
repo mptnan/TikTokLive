@@ -47,6 +47,7 @@ class WebcastConnect(Connect):
         self.logger = self._logger = logger
         self._ws: Optional[WebSocketClientProtocol] = None
         self._initial_response: WebcastResponse = initial_webcast_response
+        self._in_connection_loop: bool = False
 
     @property
     def ws(self) -> Optional[WebSocketClientProtocol]:
@@ -64,6 +65,7 @@ class WebcastConnect(Connect):
         """
 
         first_connect: bool = True
+        self._in_connection_loop = True
 
         while True:
             try:
@@ -100,6 +102,7 @@ class WebcastConnect(Connect):
                 raise
 
             finally:
+                self._in_connection_loop = False
                 self._ws = None
 
 

@@ -66,6 +66,10 @@ class WebcastWSClient:
 
         return self.ws and self.ws.open
 
+    @property
+    def in_connection_loop(self) -> bool:
+        return self._connection_generator and self._connection_generator._in_connection_loop
+
     async def send(self, message: Union[bytes, Message]) -> None:
         """
         Send a message to the WebSocket
