@@ -9,6 +9,7 @@ from threading import Thread
 from typing import Optional, Union
 
 from ffmpy import FFmpeg, FFRuntimeError
+import psutil
 
 from TikTokLive.client.web.web_base import ClientRoute, TikTokHTTPClient
 
@@ -179,10 +180,16 @@ class FetchVideoDataRoute(ClientRoute):
             self._logger.warning("Attempted to stop a stream that does not exist or has not started.")
             return
 
-        os.kill(self._ffmpeg.process.pid, signal.SIGTERM)
-
-        self._ffmpeg = None
-        self._thread = None
+        try:
+            if psutil.pid_exists(self._ffmpeg.process.pid):
+                os.kill(self._ffmpeg.process.pid, signal.SIGTERM)
+            else:
+                self._logger.debug("recording process is already killed")
+        except Exception:
+            raise
+        finally:
+            self._ffmpeg = None
+            self._thread = None
 
     def _threaded_recording(self, unique_id: str) -> None:
         """
