@@ -221,7 +221,10 @@ class TikTokLiveClient(AsyncIOEventEmitter):
         """
 
         # Disconnect the WebSocket
-        await self._ws.disconnect()
+        try:
+            await self._ws.disconnect()
+        except Exception:
+            self._logger.debug("an exception in _ws.disconnect() is ignored", exc_info=True)
 
         # Wait for the event loop task to finish
         if self._event_loop_task is not None:
@@ -233,7 +236,10 @@ class TikTokLiveClient(AsyncIOEventEmitter):
 
         # If recording, stop it
         if self._web.fetch_video_data.is_recording:
-            self._web.fetch_video_data.stop()
+            try:
+                self._web.fetch_video_data.stop()
+            except Exception:
+                self._logger.debug("an exception in fetch_video_data.stop() is ignored", exc_info=True)
 
         # Close the client (if discarding)
         if close_client:
